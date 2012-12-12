@@ -552,3 +552,6 @@ config NEED_XILINX_LLDMA
 config NEED_XILINX_IPIF
   bool
 endmenu
+
+config XILINX_PERFMON
+	tristate "Xilinx AXI Performance Monitor Core Driver"
