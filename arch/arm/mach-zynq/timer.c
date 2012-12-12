@@ -31,6 +31,7 @@
 
 #include <asm/mach/time.h>
 #include <asm/smp_twd.h>
+#include <asm/sched_clock.h>
 
 #include <mach/zynq_soc.h>
 #include "common.h"
@@ -320,6 +321,11 @@ static int xttcpss_timer_rate_change_cb(struct notifier_block *nb,
 	}
 }
 
+static u32 notrace read_sched_clock(void)
+{
+	return __raw_readl_cycles(NULL);
+}
+
 /**
  * xttcpss_timer_init - Initialize the timer
  *
@@ -433,6 +439,8 @@ static void __init xttcpss_timer_init(void)
 	xttcpss_clockevent.cpumask = cpumask_of(0);
 	clockevents_config_and_register(&xttcpss_clockevent,
 			timers[XTTCPSS_CLOCKEVENT].frequency, 1, 0xfffe);
+
+	setup_sched_clock(read_sched_clock, 16, clk_get_rate(clk)/PRESCALE);
 
 #ifdef CONFIG_HAVE_ARM_TWD
 	twd_local_timer_of_register();
